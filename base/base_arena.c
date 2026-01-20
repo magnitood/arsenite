@@ -1,23 +1,3 @@
-#include <stdio.h>
-#include <assert.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
-#include <stdlib.h>
-#include <errno.h>
-
-#include <sys/mman.h>
-
-#include "arena.h"
-
-#define KB(x) ((x) << 10)
-#define MB(x) ((x) << 20)
-#define GB(x) ((x) << 30)
-#define TB(x) ((x) << 40)
-
-#define ALIGN_UP_POW_2(x,b) (((x) + (b) - 1)&(~((b) - 1))) // stole this from raddebugger
-#define IS_POW_2(v) (((v) & ((v)-1)) == 0)
-
 bool arena_init_growing(Arena *a, size_t reserve_size, size_t commit_size)
 {
     assert(a != NULL);
@@ -40,7 +20,7 @@ bool arena_init_growing(Arena *a, size_t reserve_size, size_t commit_size)
     return true;
 }
 
-uint8_t *arena_push_(Arena *a, size_t size, size_t alignment, bool zeroed)
+uint8_t *arena_push_aligned(Arena *a, size_t size, size_t alignment, bool zeroed)
 {
     assert(a != NULL);
     assert(IS_POW_2(alignment));
