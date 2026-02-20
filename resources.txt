@@ -1,3 +1,7 @@
 Intro to parsing: https://jhwlr.io/intro-to-parsing/
 Super flat AST: https://jhwlr.io/super-flat-ast/
 AST Flattening: https://www.cs.cornell.edu/~asampson/blog/flattening.html
+AST and Code Generation: https://cap.ecn.purdue.edu/compilers/project/step2/
+Type Checking and Inference: https://www.cs.purdue.edu/homes/rompf/pmca/vol1/type-checkinginference.html
+Type Checking: https://groups.seas.harvard.edu/courses/cs153/2019fa/lectures/Lec14-Type-checking.pdf
+Lowering: https://www.cs.purdue.edu/homes/rompf/pmca/vol1/lowering.html

@@ -1,0 +1,6 @@
+proc main(argc: u64, argv: []string) {
+    let a: u32 = +5;
+    let b: u32 = -5;
+    let f: f32 = -5.23;
+    debug_print("string");
+}

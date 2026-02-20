@@ -1,6 +1,8 @@
 #ifndef BASE_ARENA_H
 #define BASE_ARENA_H
 
+#define arena_init_default(a) arena_init_growing(a, TB(4), )
+
 typedef struct Arena {
     uint8_t *buf;
     size_t pos;
