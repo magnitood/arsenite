@@ -1,4 +1,4 @@
-proc main(argc: u64, argv: []string) {
+proc main(argc: u64, argv: []string) -> (result: Result) {
     let a: u32 = +5;
     let b: u32 = -5;
     let f: f32 = -5.23;
