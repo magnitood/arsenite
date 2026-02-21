@@ -30,7 +30,7 @@ enum TokenKind {
     Tok_Star,
 };
 
-enum Type {
+enum TypeKind {
     Type_u8,
     Type_u16,
     Type_u32,
@@ -46,7 +46,7 @@ enum Type {
     Type_char32,
 };
 
-enum KeywordType {
+enum KeywordKind {
     Keyword_proc,
     Keyword_include,
     Keyword_let,
@@ -61,9 +61,10 @@ enum KeywordType {
 };
 
 struct Token {
-    TokenType type;
+    TokenKind token_kind;
     union {
-        KeywordType keyword_type;
-        Type type;
+        KeywordKind keyword_kind;
+        TypeKind type_kind;
     };
+    std::string literal;
 };
