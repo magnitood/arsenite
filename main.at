@@ -1,6 +1,8 @@
 proc main(argc: u64, argv: []string) -> (result: Result) {
     let a: u32 = +5;
     let b: u32 = -5;
-    let f: f32 = -5.23;
+    let c: f32 = -5.23;
+    let mainer: f32 = 0.00;
+    let procer: u32 = 3;
     debug_print("string");
 }

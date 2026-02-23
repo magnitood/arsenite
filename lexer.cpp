@@ -29,7 +29,8 @@ enum TokenKind {
     Tok_At,
     Tok_Star,
     Tok_Add,
-    Tok_Sub
+    Tok_Sub,
+    Tok_Dquote
 };
 
 enum TypeKind {

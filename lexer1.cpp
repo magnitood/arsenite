@@ -121,13 +121,17 @@ vector<Token> lexFile(const string& text) {
 
             tokens.push_back(Token(Tok_Number, number));
         }
+        //debug print fix - double quotations
+
 
 
         else {
 
+            
+
             if (lookahead=='=' && i+1<n && text[i+1]=='=') {
-                    tokens.push_back(Token(Tok_CompEqual,"=="));
-                    i+=2; continue;
+                tokens.push_back(Token(Tok_CompEqual,"=="));
+                i+=2; continue;
                 }
             if (lookahead=='<' && i+1<n && text[i+1]=='=') {
                 tokens.push_back(Token(Tok_CompLessThanEqual,"<="));
@@ -142,6 +146,7 @@ vector<Token> lexFile(const string& text) {
                 i+=2; continue;
             }
             switch (lookahead) {
+                case '"':tokens.push_back(Token(Tok_Dquote, "\""));break;
                 case '+': tokens.push_back(Token(Tok_Add, "+")); break;
                 case '-': tokens.push_back(Token(Tok_Sub, "-")); break;
                 case '(': tokens.push_back(Token(Tok_LParen,"(")); break;
