@@ -28,6 +28,8 @@ enum TokenKind {
     Tok_Equal,      // =
     Tok_At,
     Tok_Star,
+    Tok_Add,
+    Tok_Sub
 };
 
 enum TypeKind {
@@ -62,9 +64,21 @@ enum KeywordKind {
 
 struct Token {
     TokenKind token_kind;
+
     union {
         KeywordKind keyword_kind;
         TypeKind type_kind;
     };
+
     std::string literal;
+
+    Token() {
+        token_kind = Tok_Illegal;
+        keyword_kind = Keyword_proc;     }
+
+    Token(TokenKind k, const std::string& lit)
+        : token_kind(k), literal(lit)
+    {
+        keyword_kind = Keyword_proc;    }
 };
+
