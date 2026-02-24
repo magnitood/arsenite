@@ -1,0 +1,7 @@
+*.out
+*.exe
+ac
+ac.exe
+build/*
+main.exe
+main
