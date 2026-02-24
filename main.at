@@ -5,4 +5,6 @@ proc main(argc: u64, argv: []string) -> (result: Result) {
     let mainer: f32 = 0.00;
     let procer: u32 = 3;
     debug_print("string");
+    let f: f32 = -51.23;
+    debug_print("this is a string");
 }

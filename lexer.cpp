@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <string>
+#include <iostream>
+
 enum TokenKind {
     Tok_Illegal,
     Tok_EndOfFile,
@@ -82,4 +86,3 @@ struct Token {
     {
         keyword_kind = Keyword_proc;    }
 };
-
