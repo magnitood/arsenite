@@ -6,3 +6,5 @@ build/*
 main.exe
 main
 lexer.c
+parser
+lexer
