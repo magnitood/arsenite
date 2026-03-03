@@ -19,7 +19,7 @@ enum TokenKind {
     Tok_CompLessThanEqual,
     Tok_CompGreaterThanEqual,
     Tok_CompNotEqual,
-    Tok_Negate,
+    Tok_Exclam,
 
     Tok_LParen,     // (
     Tok_RParen,     // )
@@ -35,10 +35,11 @@ enum TokenKind {
     Tok_Equal,      // =
     Tok_At,
     Tok_Star,
-    Tok_Add,
-    Tok_Sub,
-    Tok_Mul, // TODO
-    Tok_Div, // TODO
+    Tok_Plus,
+    Tok_Minus,
+    Tok_FSlash,
+    Tok_Div,
+    Tok_Percentage,
 
     // types
     Tok_u8,
