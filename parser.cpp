@@ -1,8 +1,6 @@
-#include <cstdarg>
 #include <cstdio>
 #include <iostream>
 #include <fstream>
-#include <optional>
 #include <sstream>
 #include <string>
 #include <cstdio>
@@ -67,7 +65,6 @@ enum ExprKind {
     Expr_Operator,
     Expr_FuncCall,
     Expr_ArrIndex,
-    Expr_Assign,
 };
 
 enum AtomKind {
@@ -126,12 +123,8 @@ struct Expr {
         };
         FuncCall func_call; // Expr_FuncCall
         ArrIndex arr_index; //Expr for array indexing
-        AssignExpr ass_expr; //Expr for assignment operation
 
     };
-
-    Expr (AssignExpr as)
-            :kind(Expr_Assign), ass_expr(as){}
 
     Expr (ArrIndex ar)
             :kind(Expr_ArrIndex), arr_index(ar){}
@@ -204,20 +197,8 @@ Expr* parse_expression(Lexer& l, int min_prec){
 
         Expr* primary_rhs = parse_expression(l, next_min_prec);
 
-        if(op == Op_Assign){
-            if(primary_lhs->kind == Expr_Atom && primary_lhs->at.kind == Atom_Variable){
-                AssignExpr as{.name = primary_lhs->at.value, .right = primary_rhs};
-                Expr* ep = new Expr(as);
-                return ep;
-            }
-            else{
-                std::cout<<"Horrible mistakes have been done"<<std::endl;
-                return nullptr;
-            }
-        }
-        else{
-            primary_lhs = new Expr(primary_lhs, primary_rhs, op);
-        }
+        primary_lhs = new Expr(primary_lhs, primary_rhs, op);
+
 
     }
 
@@ -260,12 +241,9 @@ void pretty_print_expr(Expr *root, const std::string& prefix, const std::string&
                 );
             }
             break;
-        case Expr_Assign:
-            std::printf("Assign: %s =\n", root->ass_expr.name.c_str());
-            pretty_print_expr(root->ass_expr.right, prefix_to_pass + "└──╴", prefix_to_pass + "    ");
-            break;
 
     }
+
 }
 Expr* parse_function_call(Lexer& l, std::string val);
 Expr* parse_arr_index(Lexer& l, std::string name, std::vector<Expr*>& indexes);
