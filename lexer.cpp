@@ -29,7 +29,6 @@ std::unordered_map<std::string, TokenKind> keywordTable = {
     {"proc", Tok_proc},
     {"include", Tok_include},
     {"let", Tok_let},
-    {"debug_print", Tok_debug_print},
     {"struct", Tok_struct},
     {"enum", Tok_enum},
     {"if", Tok_if},
@@ -37,6 +36,7 @@ std::unordered_map<std::string, TokenKind> keywordTable = {
     {"while", Tok_while},
     {"for", Tok_for},
     {"do", Tok_do},
+    {"return", Tok_return},
     {"u8", Tok_u8},
     {"u16", Tok_u16},
     {"u32", Tok_u32},
@@ -50,67 +50,139 @@ std::unordered_map<std::string, TokenKind> keywordTable = {
     {"char8", Tok_char8},
     {"char16", Tok_char16},
     {"char32", Tok_char32},
+    {"string", Tok_string},
 };
 
 void lexer_print_token(Token t)
 {
     switch(t.kind) {
-        case Tok_Illegal             : printf("Tok_Illegal\n"); break;
-        case Tok_EndOfFile           : printf("Tok_EndOfFile\n"); break;
-        case Tok_Identifier          : printf("Tok_Identifier\n"); break;
-        case Tok_Number              : printf("Tok_Number\n"); break;
-        case Tok_String              : printf("Tok_String\n"); break;
-        case Tok_CompEqual           : printf("Tok_CompEqual\n"); break;
-        case Tok_CompLessThan        : printf("Tok_CompLessThan\n"); break;
-        case Tok_CompGreaterThan     : printf("Tok_CompGreaterThan\n"); break;
-        case Tok_CompLessThanEqual   : printf("Tok_CompLessThanEqual\n"); break;
-        case Tok_CompGreaterThanEqual: printf("Tok_CompGreaterThanEqual\n"); break;
-        case Tok_CompNotEqual        : printf("Tok_CompNotEqual\n"); break;
-        case Tok_Exclam              : printf("Tok_Exclam\n"); break;
-        case Tok_LParen              : printf("Tok_LParen\n"); break;
-        case Tok_RParen              : printf("Tok_RParen\n"); break;
-        case Tok_LBrace              : printf("Tok_LBrace\n"); break;
-        case Tok_RBrace              : printf("Tok_RBrace\n"); break;
-        case Tok_LBracket            : printf("Tok_LBracket\n"); break;
-        case Tok_RBracket            : printf("Tok_RBracket\n"); break;
-        case Tok_Colon               : printf("Tok_Colon\n"); break;
-        case Tok_Comma               : printf("Tok_Comma\n"); break;
-        case Tok_Semicolon           : printf("Tok_Semicolon\n"); break;
-        case Tok_Dquote              : printf("Tok_Dquote\n"); break;
-        case Tok_Equal               : printf("Tok_Equal\n"); break;
-        case Tok_At                  : printf("Tok_At\n"); break;
-        case Tok_Star                : printf("Tok_Star\n"); break;
-        case Tok_Plus                : printf("Tok_Plus\n"); break;
-        case Tok_Minus               : printf("Tok_Minus\n"); break;
-        case Tok_FSlash              : printf("Tok_FSlash\n"); break;
-        case Tok_Percentage          : printf("Tok_FSlash\n"); break;
-        case Tok_Div                 : printf("Tok_Div\n"); break;
-        case Tok_u8                  : printf("Tok_u8\n"); break;
-        case Tok_u16                 : printf("Tok_u16\n"); break;
-        case Tok_u32                 : printf("Tok_u32\n"); break;
-        case Tok_u64                 : printf("Tok_u64\n"); break;
-        case Tok_i8                  : printf("Tok_i8\n"); break;
-        case Tok_i16                 : printf("Tok_i16\n"); break;
-        case Tok_i32                 : printf("Tok_i32\n"); break;
-        case Tok_i64                 : printf("Tok_i64\n"); break;
-        case Tok_f32                 : printf("Tok_f32\n"); break;
-        case Tok_f64                 : printf("Tok_f64\n"); break;
-        case Tok_char8               : printf("Tok_char8\n"); break;
-        case Tok_char16              : printf("Tok_char16\n"); break;
-        case Tok_char32              : printf("Tok_char32\n"); break;
-        case Tok_proc                : printf("Tok_proc\n"); break;
-        case Tok_include             : printf("Tok_include\n"); break;
-        case Tok_let                 : printf("Tok_let\n"); break;
-        case Tok_debug_print         : printf("Tok_debug_print\n"); break;
-        case Tok_struct              : printf("Tok_struct\n"); break;
-        case Tok_enum                : printf("Tok_enum\n"); break;
-        case Tok_if                  : printf("Tok_if\n"); break;
-        case Tok_else                : printf("Tok_else\n"); break;
-        case Tok_else_if             : printf("Tok_else_if\n"); break;
-        case Tok_while               : printf("Tok_while\n"); break;
-        case Tok_for                 : printf("Tok_for\n"); break;
-        case Tok_do                  : printf("Tok_do\n"); break;
+        case Tok_Illegal             : printf("Tok_Illegal: %s\n", t.literal.c_str()); break;
+        case Tok_EndOfFile           : printf("Tok_EndOfFile: %s\n", t.literal.c_str()); break;
+        case Tok_Identifier          : printf("Tok_Identifier: %s\n", t.literal.c_str()); break;
+        case Tok_StringLit           : printf("Tok_StringLit: %s\n", t.literal.c_str()); break;
+        case Tok_Number              : printf("Tok_Number: %s\n", t.literal.c_str()); break;
+        case Tok_CompEqual           : printf("Tok_CompEqual: %s\n", t.literal.c_str()); break;
+        case Tok_CompLessThan        : printf("Tok_CompLessThan: %s\n", t.literal.c_str()); break;
+        case Tok_CompGreaterThan     : printf("Tok_CompGreaterThan: %s\n", t.literal.c_str()); break;
+        case Tok_CompLessThanEqual   : printf("Tok_CompLessThanEqual: %s\n", t.literal.c_str()); break;
+        case Tok_CompGreaterThanEqual: printf("Tok_CompGreaterThanEqual: %s\n", t.literal.c_str()); break;
+        case Tok_CompNotEqual        : printf("Tok_CompNotEqual: %s\n", t.literal.c_str()); break;
+        case Tok_Exclam              : printf("Tok_Exclam: %s\n", t.literal.c_str()); break;
+        case Tok_LParen              : printf("Tok_LParen: %s\n", t.literal.c_str()); break;
+        case Tok_RParen              : printf("Tok_RParen: %s\n", t.literal.c_str()); break;
+        case Tok_LBrace              : printf("Tok_LBrace: %s\n", t.literal.c_str()); break;
+        case Tok_RBrace              : printf("Tok_RBrace: %s\n", t.literal.c_str()); break;
+        case Tok_LBracket            : printf("Tok_LBracket: %s\n", t.literal.c_str()); break;
+        case Tok_RBracket            : printf("Tok_RBracket: %s\n", t.literal.c_str()); break;
+        case Tok_Colon               : printf("Tok_Colon: %s\n", t.literal.c_str()); break;
+        case Tok_Comma               : printf("Tok_Comma: %s\n", t.literal.c_str()); break;
+        case Tok_Semicolon           : printf("Tok_Semicolon: %s\n", t.literal.c_str()); break;
+        case Tok_Dquote              : printf("Tok_Dquote: %s\n", t.literal.c_str()); break;
+        case Tok_Equal               : printf("Tok_Equal: %s\n", t.literal.c_str()); break;
+        case Tok_At                  : printf("Tok_At: %s\n", t.literal.c_str()); break;
+        case Tok_Star                : printf("Tok_Star: %s\n", t.literal.c_str()); break;
+        case Tok_Plus                : printf("Tok_Plus: %s\n", t.literal.c_str()); break;
+        case Tok_Minus               : printf("Tok_Minus: %s\n", t.literal.c_str()); break;
+        case Tok_FSlash              : printf("Tok_FSlash: %s\n", t.literal.c_str()); break;
+        case Tok_Percentage          : printf("Tok_FSlash: %s\n", t.literal.c_str()); break;
+        case Tok_u8                  : printf("Tok_u8: %s\n", t.literal.c_str()); break;
+        case Tok_u16                 : printf("Tok_u16: %s\n", t.literal.c_str()); break;
+        case Tok_u32                 : printf("Tok_u32: %s\n", t.literal.c_str()); break;
+        case Tok_u64                 : printf("Tok_u64: %s\n", t.literal.c_str()); break;
+        case Tok_i8                  : printf("Tok_i8: %s\n", t.literal.c_str()); break;
+        case Tok_i16                 : printf("Tok_i16: %s\n", t.literal.c_str()); break;
+        case Tok_i32                 : printf("Tok_i32: %s\n", t.literal.c_str()); break;
+        case Tok_i64                 : printf("Tok_i64: %s\n", t.literal.c_str()); break;
+        case Tok_f32                 : printf("Tok_f32: %s\n", t.literal.c_str()); break;
+        case Tok_f64                 : printf("Tok_f64: %s\n", t.literal.c_str()); break;
+        case Tok_char8               : printf("Tok_char8: %s\n", t.literal.c_str()); break;
+        case Tok_char16              : printf("Tok_char16: %s\n", t.literal.c_str()); break;
+        case Tok_char32              : printf("Tok_char32: %s\n", t.literal.c_str()); break;
+        case Tok_string              : printf("Tok_string: %s\n", t.literal.c_str()); break;
+        case Tok_proc                : printf("Tok_proc: %s\n", t.literal.c_str()); break;
+        case Tok_include             : printf("Tok_include: %s\n", t.literal.c_str()); break;
+        case Tok_let                 : printf("Tok_let: %s\n", t.literal.c_str()); break;
+        case Tok_struct              : printf("Tok_struct: %s\n", t.literal.c_str()); break;
+        case Tok_enum                : printf("Tok_enum: %s\n", t.literal.c_str()); break;
+        case Tok_if                  : printf("Tok_if: %s\n", t.literal.c_str()); break;
+        case Tok_else                : printf("Tok_else: %s\n", t.literal.c_str()); break;
+        case Tok_else_if             : printf("Tok_else_if: %s\n", t.literal.c_str()); break;
+        case Tok_while               : printf("Tok_while: %s\n", t.literal.c_str()); break;
+        case Tok_for                 : printf("Tok_for: %s\n", t.literal.c_str()); break;
+        case Tok_do                  : printf("Tok_do: %s\n", t.literal.c_str()); break;
+        case Tok_return              : printf("Tok_return: %s\n", t.literal.c_str()); break;
     }
+}
+
+std::string lexer_tokenkind_string(TokenKind kind)
+{
+    switch (kind) {
+    case Tok_Illegal:              return "Illegal";        break;
+    case Tok_EndOfFile:            return "End of File";    break;
+
+    case Tok_Identifier:           return "Identifier";     break;
+    case Tok_Number:               return "Number Literal"; break;
+    case Tok_StringLit:            return "StringLit";      break;
+
+    case Tok_CompEqual:            return "==";             break;
+    case Tok_CompLessThan:         return "<";              break;
+    case Tok_CompGreaterThan:      return ">";              break;
+    case Tok_CompLessThanEqual:    return "<=";             break;
+    case Tok_CompGreaterThanEqual: return ">=";             break;
+    case Tok_CompNotEqual:         return "!=";             break;
+    case Tok_Exclam:               return "!";              break;
+
+    case Tok_LParen:               return "(" ;             break;
+    case Tok_RParen:               return ")" ;             break;
+    case Tok_LBrace:               return "{" ;             break;
+    case Tok_RBrace:               return "}" ;             break;
+    case Tok_LBracket:             return "[" ;             break;
+    case Tok_RBracket:             return "]" ;             break;
+    case Tok_Colon:                return ":" ;             break;
+    case Tok_Comma:                return "," ;             break;
+    case Tok_Semicolon:            return ";" ;             break;
+    case Tok_Dquote:               return "\"";             break;
+
+    case Tok_Equal:                return "=" ;             break;
+    case Tok_At:                   return "@";              break;
+    case Tok_Star:                 return "*";              break;
+    case Tok_Plus:                 return "+";              break;
+    case Tok_Minus:                return "-";              break;
+    case Tok_FSlash:               return "/";              break;
+    case Tok_Percentage:           return "%";              break;
+
+    // types
+    case Tok_u8:                   return "u8";             break;
+    case Tok_u16:                  return "u16";            break;
+    case Tok_u32:                  return "u32";            break;
+    case Tok_u64:                  return "u64";            break;
+    case Tok_i8:                   return "i8";             break;
+    case Tok_i16:                  return "i16";            break;
+    case Tok_i32:                  return "i32";            break;
+    case Tok_i64:                  return "i64";            break;
+    case Tok_f32:                  return "f32";            break;
+    case Tok_f64:                  return "f64";            break;
+    case Tok_char8:                return "char8";          break;
+    case Tok_char16:               return "char16";         break;
+    case Tok_char32:               return "char32";         break;
+    case Tok_string:               return "string";         break;
+
+    // Keywords
+    case Tok_proc:                 return "proc";           break;
+    case Tok_include:              return "include";        break;
+    case Tok_let:                  return "let";            break;
+    case Tok_struct:               return "struct";         break;
+    case Tok_enum:                 return "enum";           break;
+    case Tok_if:                   return "if";             break;
+    case Tok_else:                 return "else";           break;
+    case Tok_else_if:              return "else if" ;       break;
+    case Tok_while:                return "while";          break;
+    case Tok_for:                  return "for";            break;
+    case Tok_do:                   return "do";             break;
+    case Tok_return:               return "return";             break;
+    }
+
+    return "";
 }
 
 Lexer lexer_lex_file(const std::string& text) {
@@ -148,10 +220,8 @@ Lexer lexer_lex_file(const std::string& text) {
 
             tok.literal = ident;
             tokens.push_back(tok);
-        }
 
-        //else if for number checking
-        else if (isDigit(lookahead)) {
+        } else if (isDigit(lookahead)) { //else if for number checking
             std::string number = "";
             bool seenDot = false;
 
@@ -171,13 +241,12 @@ Lexer lexer_lex_file(const std::string& text) {
             }
 
             tokens.push_back(Token(Tok_Number, number));
-        }
-        //debug print fix - double quotations
-        else {
-            if (lookahead=='=' && i+1<n && text[i+1]=='=') {
-                tokens.push_back(Token(Tok_CompEqual,"=="));
+
+        } else {
+            if (lookahead == '=' && i+1< n && text[i+1] == '=') {
+                tokens.push_back(Token(Tok_CompEqual, "=="));
                 i+=2; continue;
-                }
+            }
             if (lookahead=='<' && i+1<n && text[i+1]=='=') {
                 tokens.push_back(Token(Tok_CompLessThanEqual,"<="));
                 i+=2; continue;
@@ -190,7 +259,10 @@ Lexer lexer_lex_file(const std::string& text) {
                 tokens.push_back(Token(Tok_CompNotEqual,"!="));
                 i+=2; continue;
             }
+
             switch (lookahead) {
+                case '>': tokens.push_back(Token(Tok_CompGreaterThan, ">")); break;
+                case '<': tokens.push_back(Token(Tok_CompLessThan, "<")); break;
                 case '"': tokens.push_back(Token(Tok_Dquote, "\""));break;
                 case '+': tokens.push_back(Token(Tok_Plus, "+")); break;
                 case '-': tokens.push_back(Token(Tok_Minus, "-")); break;

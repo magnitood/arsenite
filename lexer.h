@@ -11,7 +11,7 @@ enum TokenKind {
 
     Tok_Identifier,
     Tok_Number,
-    Tok_String,
+    Tok_StringLit,
 
     Tok_CompEqual,
     Tok_CompLessThan,
@@ -38,7 +38,6 @@ enum TokenKind {
     Tok_Plus,
     Tok_Minus,
     Tok_FSlash,
-    Tok_Div,
     Tok_Percentage,
 
     // types
@@ -55,12 +54,12 @@ enum TokenKind {
     Tok_char8,
     Tok_char16,
     Tok_char32,
+    Tok_string,
 
     // Keywords
     Tok_proc,
     Tok_include,
     Tok_let,
-    Tok_debug_print,
     Tok_struct,
     Tok_enum,
     Tok_if,
@@ -69,6 +68,7 @@ enum TokenKind {
     Tok_while,
     Tok_for,
     Tok_do,
+    Tok_return,
 };
 
 struct Token {
@@ -94,5 +94,6 @@ Token lexer_current(Lexer& l);
 Token  lexer_next(Lexer& l);
 Lexer lexer_lex_file(const std::string& text);
 void  lexer_print_token(Token t);
+std::string lexer_tokenkind_string(TokenKind t);
 
 #endif // LEXER_H

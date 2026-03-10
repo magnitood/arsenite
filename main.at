@@ -1,1 +1,8 @@
-o = x = 3*a+-1+foo(x+3,@s*t-p)+3/5=ass[2*y][3*5][2*r-*y][6+7]/(@g+!5)%t%4+5.381381
+proc main(argc: u64, argv: []string) -> u64 {
+    let a: u32 = 3;
+    let b: u32 = 4;
+    let c: u32;
+    c = a+b;
+    debug_print(c, a+b);
+    return 0;
+}
