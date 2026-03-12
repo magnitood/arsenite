@@ -5,3 +5,5 @@ AST and Code Generation: https://cap.ecn.purdue.edu/compilers/project/step2/
 Type Checking and Inference: https://www.cs.purdue.edu/homes/rompf/pmca/vol1/type-checkinginference.html
 Type Checking: https://groups.seas.harvard.edu/courses/cs153/2019fa/lectures/Lec14-Type-checking.pdf
 Lowering: https://www.cs.purdue.edu/homes/rompf/pmca/vol1/lowering.html
+IL Documentation: http://c9x.me/compile/doc/il.html
+QBE Release: http://c9x.me/compile/releases.html
