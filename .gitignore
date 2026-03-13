@@ -1,5 +1,7 @@
 *.out
 *.exe
+*.ssa
+*.s
 ac
 ac.exe
 build/*
